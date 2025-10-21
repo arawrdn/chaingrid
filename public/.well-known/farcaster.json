@@ -1,0 +1,18 @@
+{
+  "accountAssociation": {
+    "header": "eyJmaWQiOjQ0MDcyMywidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDJBNmI1MjA0QjgzQzc2MTljOTBjNEVCNmI1MzY1QUEwYjdkOTEyRjcifQ",
+    "payload": "eyJkb21haW4iOiJjaGFpbmdyaWQta29obC52ZXJjZWwuYXBwIn0",
+    "signature": "+c1kfnrN2f8pUdeKZB8k83anhDILN7pgTxETLprgk6E2RcKzBKLznQQlW2xD598k1fLkOuvNo6qXye63TUopSxw="
+  },
+  "frame": {
+    "version": "1",
+    "name": "ChainGrid",
+    "iconUrl": "https://chaingrid-kohl.vercel.app/icon.png",
+    "homeUrl": "https://chaingrid-kohl.vercel.app",
+    "imageUrl": "https://chaingrid-kohl.vercel.app/image.png",
+    "buttonTitle": "Check this out",
+    "splashImageUrl": "https://chaingrid-kohl.vercel.app/splash.png",
+    "splashBackgroundColor": "#eeccff",
+    "webhookUrl": "https://chaingrid-kohl.vercel.app/api/webhook"
+  }
+}
