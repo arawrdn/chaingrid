@@ -34,6 +34,7 @@ export default function GameBoard({ username, walletAddress, onGameComplete }: G
   const [hasPlayedToday, setHasPlayedToday] = useState(false)
 
   useEffect(() => {
+    // Get today's theme based on WIB timezone
     const now = new Date()
     const wibTime = new Date(now.toLocaleString("en-US", { timeZone: "Asia/Jakarta" }))
     const dayOfYear = Math.floor((wibTime.getTime() - new Date(wibTime.getFullYear(), 0, 0).getTime()) / 86400000)
@@ -49,6 +50,7 @@ export default function GameBoard({ username, walletAddress, onGameComplete }: G
       return
     }
 
+    // Initialize game
     const grid = generateGrid(9, 9, todayTheme.words)
     const wordLocations = findWords(grid, todayTheme.words)
 
@@ -113,6 +115,7 @@ export default function GameBoard({ username, walletAddress, onGameComplete }: G
       localStorage.setItem(`chaingrid_last_play_${username}`, today)
       onGameComplete?.()
       
+      // Submit score on-chain (Full Completion)
       submitScore(newScore);
     }
   }
@@ -120,6 +123,7 @@ export default function GameBoard({ username, walletAddress, onGameComplete }: G
   const handleGameEnd = () => {
     if (!gameState) return
 
+    // Submit score on-chain (Manual End/Timeout Score)
     submitScore(gameState.score);
     
     setGameState((prev) => (prev ? { ...prev, isGameActive: false } : null))
@@ -165,6 +169,7 @@ export default function GameBoard({ username, walletAddress, onGameComplete }: G
           onGameEnd={handleGameEnd}
         />
 
+        {/* Web3 Submission Status */}
         <div className="text-center text-sm">
             {isSubmitting && <p className="text-blue-400">Submitting score on-chain...</p>}
             {isSuccess && <p className="text-green-500">✅ Score saved successfully!</p>}
@@ -214,3 +219,11 @@ export default function GameBoard({ username, walletAddress, onGameComplete }: G
       {showTimeout && (
         <TimeoutModal
           foundWords={gameState.foundWords.size}
+          totalWords={theme.words.length}
+          score={gameState.score}
+          onClose={() => setShowTimeout(false)}
+        />
+      )}
+    </>
+  )
+}
