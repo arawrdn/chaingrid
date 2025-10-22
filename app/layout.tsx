@@ -1,8 +1,11 @@
+// app/layout.tsx
+
 import type React from "react"
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
+import { Providers } from "./providers" // Import Providers
 
 const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
@@ -61,7 +64,9 @@ export default function RootLayout({
         <meta name="twitter:card" content="summary_large_image" />
       </head>
       <body className={`font-sans antialiased`}>
-        {children}
+        <Providers> {/* Pembungkus Wagmi */}
+          {children}
+        </Providers>
         <Analytics />
       </body>
     </html>
