@@ -7,6 +7,7 @@ import WordGrid from "@/components/word-grid"
 import GameStats from "@/components/game-stats"
 import CompletionModal from "@/components/completion-modal"
 import TimeoutModal from "@/components/timeout-modal"
+import { useWeb3ScoreSubmission } from '@/hooks/useWeb3ScoreSubmission'; 
 
 interface GameBoardProps {
   username: string
@@ -15,6 +16,8 @@ interface GameBoardProps {
 }
 
 export default function GameBoard({ username, walletAddress, onGameComplete }: GameBoardProps) {
+  const { submitScore, isSubmitting, isSuccess, error } = useWeb3ScoreSubmission();
+
   const [gameState, setGameState] = useState<{
     grid: string[][]
     foundWords: Set<string>
@@ -111,38 +114,22 @@ export default function GameBoard({ username, walletAddress, onGameComplete }: G
       const today = new Date().toISOString().split("T")[0]
       localStorage.setItem(`chaingrid_last_play_${username}`, today)
       onGameComplete?.()
+      
+      // Submit score on-chain (Full Completion)
+      submitScore(newScore);
     }
 
-    // Save score to leaderboard
-    if (gameState.timeLeft > 0) {
-      const leaderboard = JSON.parse(localStorage.getItem("chaingrid_leaderboard") || "[]")
-      const today = new Date().toISOString().split("T")[0]
-      const existingEntry = leaderboard.find((e: any) => e.username === username && e.date === today)
-
-      if (existingEntry) {
-        existingEntry.score = Math.max(existingEntry.score, newScore)
-      } else {
-        leaderboard.push({ username, score: newScore, date: today, address: walletAddress })
-      }
-
-      localStorage.setItem("chaingrid_leaderboard", JSON.stringify(leaderboard))
-    }
+    // Previous local storage leaderboard saving logic removed here.
   }
 
   const handleGameEnd = () => {
     if (!gameState) return
 
-    const leaderboard = JSON.parse(localStorage.getItem("chaingrid_leaderboard") || "[]")
-    const today = new Date().toISOString().split("T")[0]
-    const existingEntry = leaderboard.find((e: any) => e.username === username && e.date === today)
+    // Submit score on-chain (Manual End/Timeout Score)
+    submitScore(gameState.score);
 
-    if (existingEntry) {
-      existingEntry.score = Math.max(existingEntry.score, gameState.score)
-    } else {
-      leaderboard.push({ username, score: gameState.score, date: today, address: walletAddress })
-    }
-
-    localStorage.setItem("chaingrid_leaderboard", JSON.stringify(leaderboard))
+    // Previous local storage leaderboard saving logic removed here.
+    
     setGameState((prev) => (prev ? { ...prev, isGameActive: false } : null))
   }
 
@@ -187,6 +174,13 @@ export default function GameBoard({ username, walletAddress, onGameComplete }: G
           onGameEnd={handleGameEnd}
         />
 
+        {/* Web3 Submission Status */}
+        <div className="text-center text-sm">
+            {isSubmitting && <p className="text-blue-400">Submitting score on-chain...</p>}
+            {isSuccess && <p className="text-green-500">✅ Score saved successfully!</p>}
+            {error && <p className="text-red-500">❌ Submission Error: {error.message || "Check wallet/network"}</p>}
+        </div>
+
         {/* Word Grid */}
         <WordGrid
           grid={gameState.grid}
@@ -205,37 +199,4 @@ export default function GameBoard({ username, walletAddress, onGameComplete }: G
             {theme.words.map((word) => (
               <span
                 key={word}
-                className={`px-2 sm:px-3 py-1 rounded font-semibold text-xs sm:text-sm btn-transition ${
-                  gameState.foundWords.has(word)
-                    ? "bg-yellow-400 text-black shadow-md"
-                    : "bg-gray-800 text-yellow-600 hover:bg-gray-700"
-                }`}
-              >
-                {word}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {showCompletion && (
-        <CompletionModal
-          foundWords={gameState.foundWords.size}
-          totalWords={theme.words.length}
-          score={gameState.score}
-          timeLeft={gameState.timeLeft}
-          onClose={() => setShowCompletion(false)}
-        />
-      )}
-
-      {showTimeout && (
-        <TimeoutModal
-          foundWords={gameState.foundWords.size}
-          totalWords={theme.words.length}
-          score={gameState.score}
-          onClose={() => setShowTimeout(false)}
-        />
-      )}
-    </>
-  )
-}
+                className={`px-2
