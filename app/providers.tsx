@@ -4,10 +4,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { walletConnect } from 'wagmi/connectors'; 
 import { SUPPORTED_CHAINS } from '../lib/web3/constants'; 
 
-// Inisialisasi Query Client (digunakan oleh Wagmi)
 const queryClient = new QueryClient();
 
-// Gunakan Project ID dari reown
 const WALLETCONNECT_PROJECT_ID = '9d223614796ed232ccb4903dce656eab'; 
 
 // Konfigurasi Wagmi
