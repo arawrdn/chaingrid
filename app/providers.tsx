@@ -12,12 +12,10 @@ const config = createConfig({
   
   chains: SUPPORTED_CHAINS, 
   transports: {
-    // Menggunakan transport HTTP default untuk semua chain yang didukung
     [SUPPORTED_CHAINS[0].id]: http(), 
     [SUPPORTED_CHAINS[1].id]: http(), 
   },
   connectors: [
-    // Konektor WalletConnect dengan Project ID Anda
     walletConnect({ 
         projectId: WALLETCONNECT_PROJECT_ID, 
         showQrModal: false, 
