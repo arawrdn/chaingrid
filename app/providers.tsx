@@ -20,7 +20,6 @@ const config = createConfig({
         projectId: WALLETCONNECT_PROJECT_ID, 
         showQrModal: false, 
     }),
-    // ... Tambahkan konektor lain jika diperlukan
   ],
 });
 
