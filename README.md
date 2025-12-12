@@ -13,6 +13,8 @@ Every day, players discover 5 hidden crypto words inside a 9x9 grid — themed a
 
 3. Select letters by dragging or tapping in straight lines (horizontal, vertical, or diagonal).
 
-4. When all words are found → 🎊 “Puzzle Complete!” +50 Points.
+4. When all words are found → “Puzzle Complete!” +50 Points.
 
 5. Share your result on Farcaster or social media
+
+6. Powered by @aradeawardana97
