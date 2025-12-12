@@ -8,9 +8,8 @@ const queryClient = new QueryClient();
 
 const WALLETCONNECT_PROJECT_ID = '9d223614796ed232ccb4903dce656eab'; 
 
-// Konfigurasi Wagmi
 const config = createConfig({
-  // Menerapkan Base dan Celo Mainnet
+  
   chains: SUPPORTED_CHAINS, 
   transports: {
     // Menggunakan transport HTTP default untuk semua chain yang didukung
