@@ -1,5 +1,3 @@
-// app/providers.tsx
-
 import React from 'react';
 import { createConfig, WagmiProvider, http } from 'wagmi';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
