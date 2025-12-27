@@ -7,7 +7,7 @@ Every day, players discover 5 hidden crypto words inside a 9x9 grid — themed a
 
 # HOW TO PLAY
 
-1. Connect your wallet (optional) — to save progress per address.
+1. Connect your wallet — to save progress per address.
 
 2. Find the 5 words related to today’s crypto theme.
 
