@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaingrid | On-chain Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: #0a0a0a; color: #00ff41; font-family: 'Courier New', monospace; }
+        .grid-bg { background-image: radial-gradient(#1a1a1a 1px, transparent 1px); background-size: 30px 30px; }
+        .stat-card { background: rgba(0, 0, 0, 0.8); border: 1px solid #00ff41; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); }
+    </style>
+</head>
+<body class="grid-bg min-height-screen p-8">
+    <nav class="flex justify-between items-center mb-12 border-b border-green-900 pb-4">
+        <h1 class="text-2xl font-bold tracking-widest uppercase">Chaingrid v1.0</h1>
+        <appkit-button></appkit-button>
+    </nav>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="stat-card p-6 rounded-lg">
+            <h3 class="text-gray-400 text-sm mb-2">VoteManager.sol</h3>
+            <p class="text-3xl font-bold" id="vote-count">--</p>
+            <p class="text-xs mt-2 text-green-700">Live from Base Mainnet</p>
+        </div>
+
+        <div class="stat-card p-6 rounded-lg">
+            <h3 class="text-gray-400 text-sm mb-2">SBTReward.sol</h3>
+            <p class="text-3xl font-bold" id="sbt-issued">--</p>
+            <p class="text-xs mt-2 text-green-700">Total SBT Distributed</p>
+        </div>
+
+        <div class="stat-card p-6 rounded-lg">
+            <h3 class="text-gray-400 text-sm mb-2">Network Status</h3>
+            <p class="text-3xl font-bold text-blue-400">BASE</p>
+            <p class="text-xs mt-2 text-green-700">Chain ID: 8453</p>
+        </div>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
