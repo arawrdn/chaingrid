@@ -5,6 +5,14 @@ Every day, players discover 5 hidden crypto words inside a 9x9 grid — themed a
 
 ---
 
+### ⚡ High-Performance UX: Session Keys
+To solve the "Transaction Fatigue" in Web3 gaming, ChainGrid implements **Ephemeral Session Keys**:
+- **One-Sign Entry:** Users sign once to authorize a temporary session wallet.
+- **Zero Latency:** Grid moves and game actions are signed automatically by the session key.
+- **Security:** Session keys have a limited lifespan (1 hour) and cannot withdraw assets; they can only execute game-specific functions.
+
+---
+
 # HOW TO PLAY
 
 1. Connect your wallet — to save progress per address.
