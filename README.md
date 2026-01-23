@@ -52,3 +52,28 @@ The ChainGrid token will serve as the backbone of our ecosystem. Its utility inc
 * **Blockchain:** Base (Ethereum Layer 2)
 * **Wallet Support:** WalletConnect v2, Coinbase Wallet, and MetaMask
 * **State Management:** Optimized for real-time grid updates.
+
+## Social Interaction Features
+
+To make Chaingrid more engaging and community-driven, future updates will include social interaction features such as:
+
+### Share Your Results
+Players can share their puzzle results directly on platforms like **Twitter (X)**, **Farcaster**, or **Lens**.  
+Each share will include your grid progress and streak emoji — similar to how Wordle shares daily scores.
+
+### Friend Challenges
+Invite your friends to play the same daily puzzle and compete for the best score.  
+You’ll be able to generate a **unique challenge link** and share it with others.
+
+### Leaderboards
+Track your performance globally!  
+A public leaderboard will show top players and their streaks, ranked by completion speed and accuracy.
+
+### Daily Streaks
+Earn streak bonuses for solving puzzles on consecutive days.  
+Stay active, climb the ranks, and keep your streak alive!
+
+---
+
+These features aim to make Chaingrid not just a puzzle game — but a **social experience** that connects players across the crypto and Web3 community.
+
