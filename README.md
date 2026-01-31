@@ -1,3 +1,7 @@
+![Built on Base](https://img.shields.io/badge/Built%20on%20Base-blue?logo=coinbase)
+![Base Verified Contract](https://img.shields.io/badge/Base%20Verified%20Contract-0f67ff?logo=coinbase)
+![Base Ecosystem Project](https://img.shields.io/badge/Base%20Ecosystem%20Project-0052ff?logo=coinbase)
+
 ![1000094832](https://github.com/user-attachments/assets/46ab33ba-4c5d-474c-9eef-27998d8307e3)
 
 ChainGrid is a blockchain-themed daily word puzzle game built with Next.js + React + TypeScript.
