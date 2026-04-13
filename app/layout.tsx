@@ -54,7 +54,7 @@ export default function RootLayout({
       <head>
         <meta name="fc:miniapp" content={JSON.stringify(miniappConfig)} />
         <meta name="fc:frame" content={JSON.stringify(miniappConfig)} />
-        <meta name="talentapp:project_verification" content="164306cecdfbed9f1cc7a58d56bd55ecb5491aa9ce19a5a761e240df650e1809baf36d4364ba0ffecfda7f1cd28376173b025d5baec688e0d680fb0d213d0842">
+        <meta name="talentapp:project_verification" content="164306cecdfbed9f1cc7a58d56bd55ecb5491aa9ce19a5a761e240df650e1809baf36d4364ba0ffecfda7f1cd28376173b025d5baec688e0d680fb0d213d0842" />
         <meta property="og:image" content={`${baseUrl}/chaingrid-frame-preview.jpg`} />
         <meta property="og:image:width" content="900" />
         <meta property="og:image:height" content="600" />
