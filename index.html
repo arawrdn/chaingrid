@@ -3,40 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chaingrid | On-chain Dashboard</title>
+    <title>Chaingrid | MiniPay Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
-        body { background: #0a0a0a; color: #00ff41; font-family: 'Courier New', monospace; }
-        .grid-bg { background-image: radial-gradient(#1a1a1a 1px, transparent 1px); background-size: 30px 30px; }
-        .stat-card { background: rgba(0, 0, 0, 0.8); border: 1px solid #00ff41; box-shadow: 0 0 15px rgba(0, 255, 65, 0.2); }
+        body {
+            background: #0a0a0a;
+            color: #00ff41;
+            font-family: 'Courier New', monospace;
+        }
+        .grid-bg {
+            background-image: radial-gradient(#1a1a1a 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        .stat-card {
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid #00ff41;
+            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
+        }
+        button:hover {
+            background: #00ff41;
+            color: black;
+        }
     </style>
 </head>
-<body class="grid-bg min-height-screen p-8">
-    <nav class="flex justify-between items-center mb-12 border-b border-green-900 pb-4">
-        <h1 class="text-2xl font-bold tracking-widest uppercase">Chaingrid v1.0</h1>
-        <appkit-button></appkit-button>
+
+<body class="grid-bg min-h-screen p-6">
+
+    <!-- NAV -->
+    <nav class="flex justify-between items-center mb-10 border-b border-green-900 pb-4">
+        <h1 class="text-xl md:text-2xl font-bold tracking-widest uppercase">
+            Chaingrid CELO v2
+        </h1>
+
+        <div class="flex gap-2">
+            <button onclick="connectWallet()" class="border border-green-500 px-3 py-2 rounded text-sm">
+                Connect
+            </button>
+            <button onclick="sendCUSD()" class="border border-green-500 px-3 py-2 rounded text-sm">
+                Send 0.1 cUSD
+            </button>
+        </div>
     </nav>
 
+    <!-- WALLET INFO -->
+    <div class="mb-6 text-sm text-green-400">
+        Wallet: <span id="wallet-address">Not Connected</span>
+    </div>
+
+    <!-- GRID -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
         <div class="stat-card p-6 rounded-lg">
             <h3 class="text-gray-400 text-sm mb-2">VoteManager.sol</h3>
             <p class="text-3xl font-bold" id="vote-count">--</p>
-            <p class="text-xs mt-2 text-green-700">Live from Base Mainnet</p>
+            <p class="text-xs mt-2 text-green-700">MiniPay Ready</p>
         </div>
 
         <div class="stat-card p-6 rounded-lg">
             <h3 class="text-gray-400 text-sm mb-2">SBTReward.sol</h3>
             <p class="text-3xl font-bold" id="sbt-issued">--</p>
-            <p class="text-xs mt-2 text-green-700">Total SBT Distributed</p>
+            <p class="text-xs mt-2 text-green-700">Reward via cUSD</p>
         </div>
 
         <div class="stat-card p-6 rounded-lg">
             <h3 class="text-gray-400 text-sm mb-2">Network Status</h3>
-            <p class="text-3xl font-bold text-blue-400">BASE</p>
-            <p class="text-xs mt-2 text-green-700">Chain ID: 8453</p>
+            <p class="text-3xl font-bold text-blue-400">CELO</p>
+            <p class="text-xs mt-2 text-green-700">Chain ID: 42220</p>
         </div>
+
     </div>
 
-    <script type="module" src="main.js"></script>
+    <!-- SCRIPT -->
+    <script>
+        let currentAccount = null;
+
+        async function connectWallet() {
+            if (!window.ethereum) {
+                alert("Gunakan MiniPay / Opera Mini");
+                return;
+            }
+
+            try {
+                // switch ke CELO
+                await window.ethereum.request({
+                    method: "wallet_switchEthereumChain",
+                    params: [{ chainId: "0xa4ec" }]
+                });
+
+                const accounts = await window.ethereum.request({
+                    method: "eth_requestAccounts"
+                });
+
+                currentAccount = accounts[0];
+
+                document.getElementById("wallet-address").innerText =
+                    currentAccount.slice(0,6) + "..." + currentAccount.slice(-4);
+
+                console.log("Connected:", currentAccount);
+
+            } catch (err) {
+                console.error(err);
+                alert("Gagal connect wallet");
+            }
+        }
+
+        async function sendCUSD() {
+            if (!window.ethereum || !currentAccount) {
+                alert("Connect wallet dulu");
+                return;
+            }
+
+            const cUSD = "0x765DE816845861e75A25fCA122bb6898B8B1282a";
+
+            try {
+                const to = prompt("Masukkan address tujuan:");
+                if (!to) return;
+
+                const amountHex =
+                    "000000000000000000000000000000000000000000000000016345785d8a0000"; // 0.1 cUSD
+
+                const data =
+                    "0xa9059cbb" +
+                    to.replace("0x", "").padStart(64, "0") +
+                    amountHex;
+
+                await window.ethereum.request({
+                    method: "eth_sendTransaction",
+                    params: [{
+                        from: currentAccount,
+                        to: cUSD,
+                        data: data
+                    }]
+                });
+
+                alert("Transaksi dikirim!");
+
+            } catch (err) {
+                console.error(err);
+                alert("Transaksi gagal");
+            }
+        }
+
+        // auto detect wallet
+        if (window.ethereum) {
+            window.ethereum.request({ method: "eth_accounts" })
+            .then(accounts => {
+                if (accounts.length > 0) {
+                    currentAccount = accounts[0];
+                    document.getElementById("wallet-address").innerText =
+                        currentAccount.slice(0,6) + "..." + currentAccount.slice(-4);
+                }
+            });
+        }
+    </script>
+
 </body>
 </html>
