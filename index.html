@@ -1,162 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chaingrid | MiniPay Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chaingrid | MiniPay App</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    <style>
-        body {
-            background: #0a0a0a;
-            color: #00ff41;
-            font-family: 'Courier New', monospace;
-        }
-        .grid-bg {
-            background-image: radial-gradient(#1a1a1a 1px, transparent 1px);
-            background-size: 30px 30px;
-        }
-        .stat-card {
-            background: rgba(0, 0, 0, 0.85);
-            border: 1px solid #00ff41;
-            box-shadow: 0 0 15px rgba(0, 255, 65, 0.2);
-        }
-        button:hover {
-            background: #00ff41;
-            color: black;
-        }
-    </style>
+  <style>
+    body {
+      background: #0a0a0a;
+      color: #00ff41;
+      font-family: monospace;
+    }
+    .card {
+      border: 1px solid #00ff41;
+      background: rgba(0,0,0,0.8);
+    }
+  </style>
 </head>
 
-<body class="grid-bg min-h-screen p-6">
+<body class="p-6">
 
-    <!-- NAV -->
-    <nav class="flex justify-between items-center mb-10 border-b border-green-900 pb-4">
-        <h1 class="text-xl md:text-2xl font-bold tracking-widest uppercase">
-            Chaingrid CELO v2
-        </h1>
+  <!-- WARNING -->
+  <div id="warning" class="text-red-500 mb-4"></div>
 
-        <div class="flex gap-2">
-            <button onclick="connectWallet()" class="border border-green-500 px-3 py-2 rounded text-sm">
-                Connect
-            </button>
-            <button onclick="sendCUSD()" class="border border-green-500 px-3 py-2 rounded text-sm">
-                Send 0.1 cUSD
-            </button>
-        </div>
-    </nav>
+  <!-- NAV -->
+  <div class="flex justify-between mb-6">
+    <h1 class="text-xl font-bold">Chaingrid CELO</h1>
 
-    <!-- WALLET INFO -->
-    <div class="mb-6 text-sm text-green-400">
-        Wallet: <span id="wallet-address">Not Connected</span>
+    <div class="flex gap-2">
+      <button onclick="connectWallet()" class="border px-3 py-2">Connect</button>
+      <button onclick="vote()" class="border px-3 py-2">Vote</button>
+    </div>
+  </div>
+
+  <!-- WALLET -->
+  <div class="mb-4 text-sm">
+    Wallet: <span id="wallet-address">Not Connected</span>
+  </div>
+
+  <!-- STATUS -->
+  <div id="status" class="mb-4 text-yellow-400 text-sm"></div>
+
+  <!-- DATA -->
+  <div class="grid md:grid-cols-3 gap-4">
+
+    <div class="card p-4">
+      <p class="text-sm text-gray-400">Votes</p>
+      <p id="vote-count" class="text-2xl">--</p>
     </div>
 
-    <!-- GRID -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-        <div class="stat-card p-6 rounded-lg">
-            <h3 class="text-gray-400 text-sm mb-2">VoteManager.sol</h3>
-            <p class="text-3xl font-bold" id="vote-count">--</p>
-            <p class="text-xs mt-2 text-green-700">MiniPay Ready</p>
-        </div>
-
-        <div class="stat-card p-6 rounded-lg">
-            <h3 class="text-gray-400 text-sm mb-2">SBTReward.sol</h3>
-            <p class="text-3xl font-bold" id="sbt-issued">--</p>
-            <p class="text-xs mt-2 text-green-700">Reward via cUSD</p>
-        </div>
-
-        <div class="stat-card p-6 rounded-lg">
-            <h3 class="text-gray-400 text-sm mb-2">Network Status</h3>
-            <p class="text-3xl font-bold text-blue-400">CELO</p>
-            <p class="text-xs mt-2 text-green-700">Chain ID: 42220</p>
-        </div>
-
+    <div class="card p-4">
+      <p class="text-sm text-gray-400">SBT Issued</p>
+      <p id="sbt-issued" class="text-2xl">--</p>
     </div>
 
-    <!-- SCRIPT -->
-    <script>
-        let currentAccount = null;
+    <div class="card p-4">
+      <p class="text-sm text-gray-400">Network</p>
+      <p class="text-2xl text-blue-400">CELO</p>
+    </div>
 
-        async function connectWallet() {
-            if (!window.ethereum) {
-                alert("Gunakan MiniPay / Opera Mini");
-                return;
-            }
+  </div>
 
-            try {
-                // switch ke CELO
-                await window.ethereum.request({
-                    method: "wallet_switchEthereumChain",
-                    params: [{ chainId: "0xa4ec" }]
-                });
-
-                const accounts = await window.ethereum.request({
-                    method: "eth_requestAccounts"
-                });
-
-                currentAccount = accounts[0];
-
-                document.getElementById("wallet-address").innerText =
-                    currentAccount.slice(0,6) + "..." + currentAccount.slice(-4);
-
-                console.log("Connected:", currentAccount);
-
-            } catch (err) {
-                console.error(err);
-                alert("Gagal connect wallet");
-            }
-        }
-
-        async function sendCUSD() {
-            if (!window.ethereum || !currentAccount) {
-                alert("Connect wallet dulu");
-                return;
-            }
-
-            const cUSD = "0x765DE816845861e75A25fCA122bb6898B8B1282a";
-
-            try {
-                const to = prompt("Masukkan address tujuan:");
-                if (!to) return;
-
-                const amountHex =
-                    "000000000000000000000000000000000000000000000000016345785d8a0000"; // 0.1 cUSD
-
-                const data =
-                    "0xa9059cbb" +
-                    to.replace("0x", "").padStart(64, "0") +
-                    amountHex;
-
-                await window.ethereum.request({
-                    method: "eth_sendTransaction",
-                    params: [{
-                        from: currentAccount,
-                        to: cUSD,
-                        data: data
-                    }]
-                });
-
-                alert("Transaksi dikirim!");
-
-            } catch (err) {
-                console.error(err);
-                alert("Transaksi gagal");
-            }
-        }
-
-        // auto detect wallet
-        if (window.ethereum) {
-            window.ethereum.request({ method: "eth_accounts" })
-            .then(accounts => {
-                if (accounts.length > 0) {
-                    currentAccount = accounts[0];
-                    document.getElementById("wallet-address").innerText =
-                        currentAccount.slice(0,6) + "..." + currentAccount.slice(-4);
-                }
-            });
-        }
-    </script>
+  <script type="module" src="main.js"></script>
 
 </body>
 </html>
