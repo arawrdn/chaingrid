@@ -1,16 +1,18 @@
 import { ethers } from 'https://esm.sh/ethers@6.10.0';
 
-// ================= CONFIG =================
-
+// CONFIG
 const RPC_URL = "https://forno.celo.org";
 
 const voteManagerCA = "0xBd24A97F05220d51c927FB36cF77bB83EfEa8d61";
 const sbtRewardCA = "0x6B5f897Ad13B04Fccd172189Cb0E5C6487437FAc";
 
+// ABI minimal + flexible
 const ABI = [
   "function totalSupply() view returns (uint256)",
+  "function totalVotes() view returns (uint256)",
   "function getTotalVotes() view returns (uint256)",
-  "function totalVotes() view returns (uint256)"
+  "function vote()",
+  "function castVote()"
 ];
 
 let currentAccount = null;
@@ -19,7 +21,8 @@ let currentAccount = null;
 
 window.connectWallet = async function () {
   if (!window.ethereum) {
-    alert("Open this in MiniPay or Opera Mini");
+    document.getElementById("warning").innerText =
+      "Open this app in MiniPay";
     return;
   }
 
@@ -38,12 +41,7 @@ window.connectWallet = async function () {
 
   } catch (err) {
     console.error(err);
-
-    if (err.code === 4001) {
-      alert("User rejected connection");
-    } else {
-      alert("Wallet error");
-    }
+    setStatus("Wallet connection failed");
   }
 };
 
@@ -56,112 +54,112 @@ function updateWalletUI() {
   }
 
   el.innerText =
-    currentAccount.slice(0, 6) + "..." + currentAccount.slice(-4);
+    currentAccount.slice(0,6) + "..." + currentAccount.slice(-4);
+}
+
+// ================= STATUS =================
+
+function setStatus(text) {
+  document.getElementById("status").innerText = text;
 }
 
 // ================= AUTO CONNECT =================
 
 window.addEventListener("load", async () => {
-  if (!window.ethereum) return;
-
-  try {
-    const accounts = await window.ethereum.request({
-      method: "eth_accounts"
-    });
-
-    if (accounts.length > 0) {
-      currentAccount = accounts[0];
-      updateWalletUI();
-    }
-
-    fetchContractData();
-
-  } catch (err) {
-    console.error("Auto connect error:", err);
+  if (!window.ethereum) {
+    document.getElementById("warning").innerText =
+      "Open this app in MiniPay";
+    return;
   }
+
+  const accounts = await window.ethereum.request({
+    method: "eth_accounts"
+  });
+
+  if (accounts.length > 0) {
+    currentAccount = accounts[0];
+    updateWalletUI();
+  }
+
+  fetchData();
 });
 
 // ================= CONTRACT READ =================
 
-async function safeRead(contract, methodName) {
+async function safeCall(contract, method) {
   try {
-    if (contract[methodName]) {
-      const result = await contract[methodName]();
-      return result.toString();
+    if (contract[method]) {
+      const res = await contract[method]();
+      return res.toString();
     }
-  } catch (e) {
-    return null;
-  }
+  } catch (e) {}
   return null;
 }
 
-async function fetchContractData() {
+async function fetchData() {
   try {
     const provider = new ethers.JsonRpcProvider(RPC_URL);
 
-    const voteContract = new ethers.Contract(voteManagerCA, ABI, provider);
-    const sbtContract = new ethers.Contract(sbtRewardCA, ABI, provider);
+    const vote = new ethers.Contract(voteManagerCA, ABI, provider);
+    const sbt = new ethers.Contract(sbtRewardCA, ABI, provider);
 
-    let voteValue =
-      await safeRead(voteContract, "totalSupply") ||
-      await safeRead(voteContract, "getTotalVotes") ||
-      await safeRead(voteContract, "totalVotes") ||
+    const voteValue =
+      await safeCall(vote, "totalVotes") ||
+      await safeCall(vote, "getTotalVotes") ||
+      await safeCall(vote, "totalSupply") ||
       "--";
 
-    let sbtValue =
-      await safeRead(sbtContract, "totalSupply") ||
+    const sbtValue =
+      await safeCall(sbt, "totalSupply") ||
       "--";
 
     document.getElementById("vote-count").innerText = voteValue;
     document.getElementById("sbt-issued").innerText = sbtValue;
 
   } catch (err) {
-    console.error("Fetch error:", err);
-
-    document.getElementById("vote-count").innerText = "--";
-    document.getElementById("sbt-issued").innerText = "--";
+    console.error(err);
+    setStatus("Failed to load data");
   }
 }
 
-// ================= AUTO REFRESH =================
+setInterval(fetchData, 15000);
 
-setInterval(fetchContractData, 15000);
+// ================= VOTE =================
 
-// ================= TRANSACTION =================
-
-window.sendCUSD = async function () {
+window.vote = async function () {
   if (!currentAccount) {
-    alert("Connect wallet first");
+    setStatus("Connect wallet first");
     return;
   }
 
-  const cUSD = "0x765DE816845861e75A25fCA122bb6898B8B1282a";
-
   try {
-    const to = prompt("Enter recipient address:");
-    if (!to) return;
+    setStatus("Waiting for confirmation...");
 
-    const amount =
-      "000000000000000000000000000000000000000000000000016345785d8a0000";
+    const provider = new ethers.BrowserProvider(window.ethereum);
+    const signer = await provider.getSigner();
 
-    const data =
-      "0xa9059cbb" +
-      to.replace("0x", "").padStart(64, "0") +
-      amount;
+    const contract = new ethers.Contract(voteManagerCA, ABI, signer);
 
-    await window.ethereum.request({
-      method: "eth_sendTransaction",
-      params: [{
-        from: currentAccount,
-        to: cUSD,
-        data
-      }]
-    });
+    let tx;
 
-    alert("Transaction sent");
+    if (contract.vote) {
+      tx = await contract.vote();
+    } else if (contract.castVote) {
+      tx = await contract.castVote();
+    } else {
+      throw new Error("No vote function found");
+    }
+
+    setStatus("Transaction sent...");
+
+    await tx.wait();
+
+    setStatus("Vote success ✅");
+
+    fetchData();
 
   } catch (err) {
     console.error(err);
-    alert("Transaction failed");
+    setStatus("Vote failed ❌");
   }
 };
