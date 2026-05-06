@@ -78,5 +78,13 @@
     "overrides": {
       "react": "19.2.0",
       "react-dom": "19.2.0"
-    }
+    },
+    "ignoredBuiltDependencies": [
+      "@reown/appkit",
+      "bufferutil",
+      "keccak",
+      "sharp",
+      "utf-8-validate"
+    ]
   }
+}
