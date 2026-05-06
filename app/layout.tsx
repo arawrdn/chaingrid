@@ -1,15 +1,24 @@
 import type React from "react"
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
-import { Providers } from "./providers" // Import Providers
+import { Providers } from "./providers"
 
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+// Inisialisasi Font
+const geistSans = Geist({
+  subsets: ["latin"],
+  variable: "--font-geist-sans",
+})
 
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://chaingrid.vercel.app"
+const geistMono = Geist_Mono({
+  subsets: ["latin"],
+  variable: "--font-geist-mono",
+})
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://chaingrid-kohl.vercel.app"
+
+// Konfigurasi Frame / Mini App
 const miniappConfig = {
   version: "1",
   imageUrl: `${baseUrl}/chaingrid-frame-preview.jpg`,
@@ -25,14 +34,25 @@ const miniappConfig = {
   },
 }
 
+// 1. Export Viewport terpisah (Wajib di Next.js 15)
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+  themeColor: "#000000",
+}
+
+// 2. Metadata (Tanpa viewport)
 export const metadata: Metadata = {
   title: "ChainGrid - Crypto Word Search",
   description: "Daily crypto-themed word search game with wallet integration",
   generator: "v0.app",
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
   openGraph: {
     title: "ChainGrid - Daily Crypto Word Search",
     description: "Find hidden crypto words in 2 minutes. Connect your wallet and compete on the leaderboard!",
+    url: baseUrl,
+    siteName: "ChainGrid",
     images: [
       {
         url: `${baseUrl}/chaingrid-frame-preview.jpg`,
@@ -41,6 +61,19 @@ export const metadata: Metadata = {
         alt: "ChainGrid Game",
       },
     ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ChainGrid - Daily Crypto Word Search",
+    description: "Find hidden crypto words in 2 minutes.",
+    images: [`${baseUrl}/chaingrid-frame-preview.jpg`],
+  },
+  // Tag tambahan seperti Farcaster & Talent App dimasukkan ke 'other' agar lebih bersih
+  other: {
+    "fc:miniapp": JSON.stringify(miniappConfig),
+    "fc:frame": JSON.stringify(miniappConfig),
+    "talentapp:project_verification": "164306cecdfbed9f1cc7a58d56bd55ecb5491aa9ce19a5a761e240df650e1809baf36d4364ba0ffecfda7f1cd28376173b025d5baec688e0d680fb0d213d0842",
   },
 }
 
@@ -50,20 +83,9 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <meta name="fc:miniapp" content={JSON.stringify(miniappConfig)} />
-        <meta name="fc:frame" content={JSON.stringify(miniappConfig)} />
-        <meta name="talentapp:project_verification" content="164306cecdfbed9f1cc7a58d56bd55ecb5491aa9ce19a5a761e240df650e1809baf36d4364ba0ffecfda7f1cd28376173b025d5baec688e0d680fb0d213d0842" />
-        <meta property="og:image" content={`${baseUrl}/chaingrid-frame-preview.jpg`} />
-        <meta property="og:image:width" content="900" />
-        <meta property="og:image:height" content="600" />
-        <meta property="og:image:type" content="image/jpeg" />
-        <meta name="twitter:image" content={`${baseUrl}/chaingrid-frame-preview.jpg`} />
-        <meta name="twitter:card" content="summary_large_image" />
-      </head>
-      <body className={`font-sans antialiased`}>
-        <Providers> {/* Pembungkus Wagmi */}
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className="font-sans antialiased bg-black text-white">
+        <Providers>
           {children}
         </Providers>
         <Analytics />
