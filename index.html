@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Chaingrid | MiniPay App</title>
+
+  <!-- VERIFICATION META TAG -->
+  <meta name="talentapp:project_verification" content="164306cecdfbed9f1cc7a58d56bd55ecb5491aa9ce19a5a761e240df650e1809baf36d4364ba0ffecfda7f1cd28376173b025d5baec688e0d680fb0d213d0842">
+
   <script src="https://cdn.tailwindcss.com"></script>
 
   <style>
@@ -18,51 +22,3 @@
     }
   </style>
 </head>
-
-<body class="p-6">
-
-  <!-- WARNING -->
-  <div id="warning" class="text-red-500 mb-4"></div>
-
-  <!-- NAV -->
-  <div class="flex justify-between mb-6">
-    <h1 class="text-xl font-bold">Chaingrid CELO</h1>
-
-    <div class="flex gap-2">
-      <button onclick="connectWallet()" class="border px-3 py-2">Connect</button>
-      <button onclick="vote()" class="border px-3 py-2">Vote</button>
-    </div>
-  </div>
-
-  <!-- WALLET -->
-  <div class="mb-4 text-sm">
-    Wallet: <span id="wallet-address">Not Connected</span>
-  </div>
-
-  <!-- STATUS -->
-  <div id="status" class="mb-4 text-yellow-400 text-sm"></div>
-
-  <!-- DATA -->
-  <div class="grid md:grid-cols-3 gap-4">
-
-    <div class="card p-4">
-      <p class="text-sm text-gray-400">Votes</p>
-      <p id="vote-count" class="text-2xl">--</p>
-    </div>
-
-    <div class="card p-4">
-      <p class="text-sm text-gray-400">SBT Issued</p>
-      <p id="sbt-issued" class="text-2xl">--</p>
-    </div>
-
-    <div class="card p-4">
-      <p class="text-sm text-gray-400">Network</p>
-      <p class="text-2xl text-blue-400">CELO</p>
-    </div>
-
-  </div>
-
-  <script type="module" src="main.js"></script>
-
-</body>
-</html>
